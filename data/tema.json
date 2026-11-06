@@ -1,0 +1,6 @@
+{
+  "acento": "#ee1c22",
+  "familia": [["#ee1c22", "#ee1c22"], ["#ff4a4a", "#ff4a4a"], ["#b3000c", "#b3000c"], ["#e10600", "#e10600"],
+              ["rgba(238,28,34", "rgba(238,28,34"], ["rgba(225,6,0", "rgba(225,6,0"], ["rgba(138,8,13", "rgba(138,8,13"], ["rgba(90,5,9", "rgba(90,5,9"]],
+  "nota": "Lo escribe scripts/tema.mjs. «familia» = [valor actual, valor actual]; no editar a mano."
+}
