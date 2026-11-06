@@ -251,3 +251,14 @@
   /* Carga con #sección en la URL. */
   if (afectaAlturas(destinoDe(window.location.hash))) preparar();
 })();
+
+/* RENDIMIENTO · el carrusel del inicio solo se anima mientras se ve (antes corría siempre, también con el hero fuera de pantalla). */
+(function () {
+  try {
+    var track = document.querySelector('.hero-chain-track'), hero = document.querySelector('.hero');
+    if (!track || !hero || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (es) {
+      track.style.animationPlayState = es[es.length - 1].isIntersecting ? 'running' : 'paused';
+    }, { threshold: 0 }).observe(hero);
+  } catch (e) { /* sin efecto: el carrusel sigue como antes */ }
+})();

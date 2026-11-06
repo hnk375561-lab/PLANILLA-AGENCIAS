@@ -161,3 +161,17 @@ html body .ring-info::after{right:0;--dir:270deg;clip-path:polygon(0 0,100% 0,10
    ====================================================================================================== */
 html body header,html body header.site-header{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(6,6,7,.94)}
 .rec__card .rec__photo::before{will-change:opacity,transform}
+
+/* ═════════════ RENDIMIENTO · menos trabajo de GPU al hacer scroll ═════════════
+   Los desenfoques grandes (blur 16-48px sobre capas del tamaño de la pantalla) y los backdrop-filter se
+   recalculan en cada cuadro y son la causa más común de «lag» en notebooks y celulares. Se reemplazan por
+   fondos oscuros planos: el aspecto es casi igual y el costo de pintado baja mucho. */
+.hx-bg i{filter:none!important;inset:0!important}
+.hx-bg::after{background:linear-gradient(90deg,rgba(6,6,7,.93),rgba(6,6,7,.74) 48%,rgba(6,6,7,.64)),linear-gradient(0deg,rgba(6,6,7,.82),rgba(6,6,7,.2) 38%)!important}
+.hx .hx-s{background:#060607}
+.hx .hx-s::before{display:none!important}
+.mdp .mdk{filter:none!important;inset:0!important;opacity:.38}
+html body .hero-slide::before{filter:none!important;inset:0!important;transform:none!important;opacity:.38}
+html body :is(.glass,.conversion-form,.finance-card,.fx,.nz-big,.visit-card){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* Los placeholders de foto de las tarjetas dejan de «brillar» sin parar (animación infinita en cada tarjeta). */
+.car-ph:before{animation:none!important}

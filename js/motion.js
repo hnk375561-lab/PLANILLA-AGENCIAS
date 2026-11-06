@@ -1125,7 +1125,7 @@ function initMotion() {
       home ? initSectionEntrances(flags) : null,
       home ? initSceneChoreography(flags) : null,
       home ? initReveals(flags, inertia) : null,
-      home ? initParallax(flags) : null,
+      null, /* RENDIMIENTO: sin parallax ni wipes con clip-path atados al scroll (pintado caro); el contenido queda visible y quieto */
       home ? initSectionBackdrops(flags) : null,
       home ? initMapExperience() : null,
       home ? initOdometer() : null,
