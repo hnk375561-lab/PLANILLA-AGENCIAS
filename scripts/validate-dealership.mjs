@@ -84,7 +84,8 @@ if (d && a) {
   } else if (c.whatsApp) {
     for (const p of pages) if (html[p].includes(`wa.me/${c.whatsApp}`)) err(`${p}: WhatsApp publicado sin confirmación documental coherente`);
   } else {
-    for (const p of pages) if (/wa\.me|tel:/.test(html[p])) err(`${p}: hay teléfono o WhatsApp publicado sin confirmar`);
+    // Sin WhatsApp: nunca wa.me. Un enlace tel: solo es válido si hay un teléfono cargado en dealership.json (phoneTel, con su fuente).
+    for (const p of pages) if (/wa\.me/.test(html[p]) || (!c.phoneTel && /tel:/.test(html[p]))) err(`${p}: hay teléfono o WhatsApp publicado sin confirmar`);
   }
   if (c.phoneTel && !idx.includes(`tel:${c.phoneTel}`)) err('index.html: teléfono no coincide con dealership.json');
   if (!c.confirmadoPorDueno) {
@@ -99,7 +100,8 @@ if (d && a) {
   // --- afirmaciones sin fuente ---
   // Cada servicio solo puede aparecer si tiene su `clave` en services.published (con fuente citada).
   const claves = new Set(d.services.published.map((x) => x.clave).filter(Boolean));
-  if (!d.reviews?.publicadas && d.reviews?.googleUrl && d.reviews?.fecha) claves.add('resenas');
+  // Regla 10: reseñas solo con puntaje, cantidad, fecha y enlace de Google (antes la condición estaba invertida: !publicadas)
+  if (d.reviews?.publicadas && d.reviews?.googleUrl && d.reviews?.fecha && d.reviews?.puntaje && d.reviews?.cantidad) claves.add('resenas');
   for (const x of d.services.published) if (!x.fuente) err(`services.published: «${x.texto}» no tiene fuente`);
   const vetadas = [
     [/gestor[ií]a|taller|entrega inmediata|reserva online|\btasas?\b/i, 'servicio o condición sin fuente', null],

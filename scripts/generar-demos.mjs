@@ -123,6 +123,50 @@ function generar(a) {
   if (!a.email) D.contact.email = null;
   if (!a.facebook) D.contact.facebook = 'https://www.facebook.com/';   // la plantilla exige un enlace; sin dato real apunta a la portada de Facebook
   if (!a.instagram) D.contact.instagram = '';
+  // Datos de la ficha de Google Maps (columnas google_maps, google_puntaje, google_cantidad, google_fecha)
+  if (a.google_maps) {
+    D.location.mapsUrl = a.google_maps;
+    D.location.coordenadas.fuentes = ['Ficha de Google Maps (Places)'];
+    D.location.coordenadas.verificacion = `Coordenadas y dirección de la ficha de Google Maps, consultada el ${a.google_fecha || 'fecha no registrada'}.`;
+  }
+  if (a.google_maps && a.google_puntaje && a.google_cantidad && a.google_fecha) {
+    D.reviews = { publicadas: true, googleUrl: a.google_maps, puntaje: Number(a.google_puntaje), cantidad: Number(a.google_cantidad), fecha: a.google_fecha, escala: 5 };
+  }
+  // Teléfono fijo propio (columna telefono, ya formateado como se muestra, ej. "0343 435-5947"; el código de área puede tener 3 o 4 dígitos)
+  if (a.telefono) {
+    const t = a.telefono.replace(/\D/g, '').replace(/^0/, '');
+    if (/^\d{10}$/.test(t)) { D.contact.phone = a.telefono.trim(); D.contact.phoneTel = `+54${t}`; D.contact.phoneFuente = `Teléfono fijo publicado por fuentes públicas (${a.fuente || 'ver prospeccion/ESTADO.md'}); no confirmado por la agencia.`; }
+    else throw new Error(`telefono inválido (se esperan 10 dígitos sin el 0 inicial): ${a.telefono}`);
+  }
+  // WhatsApp con formato legible (+54 9 3446 58-5488)
+  if (D.contact.whatsApp && /^549\d{10}$/.test(D.contact.whatsApp)) { const w = D.contact.whatsApp; D.contact.whatsAppDisplay = `+54 9 ${w.slice(3, 7)} ${w.slice(7, 9)}-${w.slice(9)}`; }
+  // Horario: solo si la agencia lo tiene cargado en la columna horario ("1-5=09:00-12:30,16:30-20:30;6=09:00-13:00").
+  // Sin horario real NO se muestra el de ejemplo de la plantilla.
+  if (a.horario) {
+    const L = ['', 'L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    const N = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábados', 'Domingos'];
+    const compacto = (h) => h.replace(/^0/, '').replace(':00', '');
+    const semana = []; const cortos = []; const dias_ = new Set();
+    for (const bloque of a.horario.split(';')) {
+      const [ds, rs] = bloque.split('='); const [d1, d2] = ds.split('-').map(Number); const hasta = d2 || d1;
+      const dias = []; for (let d = d1; d <= hasta; d++) { dias.push(d); dias_.add(d); }
+      const rangos = rs.split(',').map((r) => r.split('-'));
+      const etiqueta = dias.length === 1 ? N[dias[0]] : `${N[d1]} a ${N[hasta].toLowerCase()}`;
+      semana.push({ dias, etiqueta, rangos });
+      cortos.push(`${dias.length === 1 ? L[d1] : `${L[d1]}-${L[hasta]}`} ${rangos.map(([x, y]) => `${compacto(x)}–${compacto(y)}`).join(' y ')}`);
+    }
+    D.hours = { display: true, corto: cortos.join(' · '), semana, domingo: dias_.has(7) ? undefined : 'Cerrado' };
+    if (D.hours.domingo === undefined) delete D.hours.domingo;
+  } else {
+    a.horarioEjemplo = true;   // la plantilla trae un horario de EJEMPLO: no se publica (ver --deploy)
+    log('  ⚠ sin horario real en el CSV: la demo lleva el horario de ejemplo de la plantilla y no se publica con --deploy');
+  }
+  // Enlace "Cómo llegar": con coordenadas reales (columna coordenadas_exactas = si) va al pin exacto;
+  // sin ellas, búsqueda de Google Maps por nombre + dirección, que Google resuelve al local y no al centro de la ciudad.
+  const dirMapa = `${a.direccion}, ${a.ciudad}, ${a.provincia || 'Entre Ríos'}, Argentina`;
+  if (!a.google_maps) D.location.mapsUrl = (a.coordenadas_exactas || '').toLowerCase() === 'si' && a.lat && a.lng
+    ? `https://www.google.com/maps/search/?api=1&query=${a.lat},${a.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${a.nombre}, ${dirMapa}`)}`;
   // WhatsApp visible solo para la demo (opcional)
   if (mostrarWA && a.whatsapp) { D.contact.whatsAppConfirmed = true; D.contact.whatsAppConfirmadoNota = 'DEMO: número cargado para la maqueta, no confirmado por el dueño.'; }
   // Nombres de las OTRAS agencias = prohibidos en esta demo
@@ -170,7 +214,8 @@ for (const a of agencias) {
   try {
     const { dir, url } = generar(a);
     let urlFinal = url; let desplegada = false;
-    if (deploy) { const u = subir(a, dir); if (u) urlFinal = u; desplegada = true; }
+    if (deploy && a.horarioEjemplo && flags['permitir-horario-ejemplo'] !== 'true') log('  ⛔ NO publicada: falta el horario real (columna horario del CSV). Para forzarla: --permitir-horario-ejemplo');
+    else if (deploy) { const u = subir(a, dir); if (u) urlFinal = u; desplegada = true; }
     log(`  ✓ demo lista en ${dir}${desplegada ? `\n  ✓ publicada: ${urlFinal}` : ''}`);
     resultados.push({ a, ok: true, dir, url: urlFinal, desplegada });
   } catch (e) {
