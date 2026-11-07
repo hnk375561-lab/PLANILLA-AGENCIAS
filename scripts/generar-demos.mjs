@@ -182,7 +182,7 @@ for (const a of agencias) {
 // ---------- mensajes y resumen ----------
 const mensaje = (a, url) => {
   const saludo = a.contacto ? `Hola ${a.contacto}, ¿cómo estás?` : 'Hola, ¿cómo andan?';
-  return `${saludo} Soy Santiago. Armé una maqueta de cómo podría verse el sitio web de ${a.nombre}${a.ciudad ? ` (${a.ciudad})` : ''}: catálogo con filtros, ficha por unidad, comparador, financiación, horarios y botón de WhatsApp. Es una demo sin costo, con datos de ejemplo, para que la veas desde el celular:\n\n${url}\n\nSi te gusta, la adaptamos con su stock, sus fotos y sus datos reales. ¿Te la puedo mostrar en una llamada de 10 minutos?`;
+  return `${saludo} Soy Santiago. Armé una maqueta de cómo podría verse el sitio web de ${a.nombre}${a.ciudad ? ` (${a.ciudad})` : ''}: catálogo con filtros, ficha por unidad, comparador, financiación, horarios y botón de WhatsApp. Es una demo sin costo, con datos de ejemplo, para que la veas desde el celular:\n\n${url}\n\nSi te gusta, la adaptamos con su stock, sus fotos y sus datos reales. ¿Te la puedo mostrar en una llamada de 10 minutos? Si no te interesa, decime y no te molesto más.`;
 };
 const ok = resultados.filter((r) => r.ok);
 const md = ['# Mensajes para las agencias', '', deploy ? '' : '> Las URLs son las **previstas**: todavía no se subieron a Cloudflare (corré con `--deploy` o subí `_site/` de cada carpeta).', '']
