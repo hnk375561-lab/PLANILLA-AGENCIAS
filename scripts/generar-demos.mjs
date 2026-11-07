@@ -112,7 +112,7 @@ function generar(a) {
   const url = `https://${a.proyecto}.pages.dev`;
 
   const args = ['scripts/nuevo-cliente.mjs', '--nombre', a.nombre, '--previewurl', url];
-  const map = { ciudad: 'ciudad', provincia: 'provincia', direccion: 'direccion', whatsapp: 'whatsapp', instagram: 'instagram', acento: 'acento', lat: 'lat', lng: 'lng', email: 'email', facebook: 'facebook', sigla: 'sigla' };
+  const map = { ciudad: 'ciudad', provincia: 'provincia', direccion: 'direccion', whatsapp: 'whatsapp', instagram: 'instagram', acento: 'acento', lat: 'lat', lng: 'lng', email: 'email', facebook: 'facebook', sigla: 'sigla', cp: 'cp', partido: 'partido' };
   for (const [col, flag] of Object.entries(map)) if (a[col]) args.push(`--${flag}`, a[col]);
   execFileSync('node', args, { cwd: dir, stdio: 'pipe' });
 
@@ -121,6 +121,8 @@ function generar(a) {
   // Datos que el CSV no trae: se quitan los de ejemplo de la plantilla (nunca se inventan).
   if (!a.whatsapp) Object.assign(D.contact, { whatsApp: null, whatsAppDisplay: null, whatsAppConfirmed: false, whatsAppConfirmadoNota: 'Sin WhatsApp cargado en la demo.' });
   if (!a.email) D.contact.email = null;
+  if (!a.partido) D.location.partido = '';   // "Tu Partido" es texto de ejemplo de la plantilla: sin dato real queda vacío
+  if (!a.cp) { D.location.postalCode = ''; log('  ⚠ sin código postal en el CSV (columna cp)'); }   // "C1000" es el CP de ejemplo (CABA)
   if (!a.facebook) D.contact.facebook = 'https://www.facebook.com/';   // la plantilla exige un enlace; sin dato real apunta a la portada de Facebook
   if (!a.instagram) D.contact.instagram = '';
   // Datos de la ficha de Google Maps (columnas google_maps, google_puntaje, google_cantidad, google_fecha)
@@ -228,7 +230,7 @@ for (const a of agencias) {
 // ---------- mensajes y resumen ----------
 const mensaje = (a, url) => {
   const saludo = a.contacto ? `Hola ${a.contacto}, ¿cómo estás?` : 'Hola, ¿cómo andan?';
-  return `${saludo} Soy Santiago. Armé una maqueta de cómo podría verse el sitio web de ${a.nombre}${a.ciudad ? ` (${a.ciudad})` : ''}: catálogo con filtros, ficha por unidad, comparador, financiación, horarios y botón de WhatsApp. Es una demo sin costo, con datos de ejemplo, para que la veas desde el celular:\n\n${url}\n\nSi te gusta, la adaptamos con su stock, sus fotos y sus datos reales. ¿Te la puedo mostrar en una llamada de 10 minutos? Si no te interesa, decime y no te molesto más.`;
+  return `${saludo} Soy Santiago. Armé una maqueta de cómo podría verse el sitio web de ${a.nombre}${a.ciudad ? ` (${a.ciudad})` : ''}: catálogo con filtros, ficha por unidad, comparador, financiación, horarios y botones para llamar o escribir. Es una demo sin costo, con datos de ejemplo, para que la veas desde el celular:\n\n${url}\n\nSi te gusta, la adaptamos con su stock, sus fotos y sus datos reales. ¿Te la puedo mostrar en una llamada de 10 minutos? Si no te interesa, decime y no te molesto más.`;
 };
 const ok = resultados.filter((r) => r.ok);
 const md = ['# Mensajes para las agencias', '', deploy ? '' : '> Las URLs son las **previstas**: todavía no se subieron a Cloudflare (corré con `--deploy` o subí `_site/` de cada carpeta).', '']

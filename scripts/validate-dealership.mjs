@@ -72,7 +72,8 @@ if (d && a) {
   const hx = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   // el HTML escapa & < >
   if (![`${L.address}, ${L.city}`, L.address].some((t) => idx.includes(t) || idx.includes(hx(t)))) err('index.html: falta la dirección');
   if (!idx.includes(d.contact.facebook)) err('index.html: falta el enlace a Facebook');
-  if (!idx.includes(`instagram.com/${d.contact.instagram}/`)) err('index.html: falta el enlace a Instagram');
+  if (d.contact.instagram) { if (!idx.includes(`instagram.com/${d.contact.instagram}/`)) err('index.html: falta el enlace a Instagram'); }
+  else if (/instagram\.com\/\//.test(idx)) err('index.html: hay enlaces a Instagram sin perfil cargado (instagram.com//)');
   if (!idx.includes('<title>' + d.identity.tradeName) && !idx.includes('<title>' + hx(d.identity.tradeName))) err('index.html: el title debe empezar con el nombre comercial');
   if (d.identity.cuit !== null) err('CUIT debe ser null hasta confirmación');
   try { JSON.parse(idx.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]); } catch { err('index.html: JSON-LD ausente o inválido'); }
