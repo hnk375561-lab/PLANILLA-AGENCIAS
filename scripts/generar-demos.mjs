@@ -93,7 +93,8 @@ const copyFilter = (src) => {
   const rel = path.relative(root, src);
   if (!rel) return true;
   const top = rel.split(path.sep)[0];
-  if (['.git', 'node_modules', '_site'].includes(top)) return false;
+  if (['.git', 'node_modules', '_site', 'prospeccion'].includes(top)) return false;
+  if (['agencias.csv', 'ESTADO.md', 'mensajes.md'].includes(rel)) return false;   // copias sueltas en la raíz: nunca van dentro de una demo
   if (path.resolve(src) === outDir || path.resolve(src).startsWith(outDir + path.sep)) return false;
   return true;
 };
