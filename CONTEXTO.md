@@ -51,7 +51,7 @@ Las páginas salen de `data/dealership.json` y `data/vehicles.json` con `npm run
 ## 5. Agencias demo (`demos-agencias/`)
 Carpetas (10): `colon-autos`, `lucar-s-automotores`, `centro-automotores-colon`, `eskina-autos`, `la-esquina-automotores`, `lf-autos`, `litoral-motors-gualeguaychu`, `mc-automotores`, `regner-automotores`, `uruguay-autos`. Extras: `_avisos`, `_fotos`, `_backups`.
 Cada una tiene `_site/` (lo publicado), `data/` (`vehicles.json`, `dealership.json`; unidades en `_site/js/units.min.json`) y su propio `.gitignore`.
-⚠️ **Discrepancia abierta:** `ESTADO.md` lista Guarischi Automotores y no La Esquina; esta carpeta tiene La Esquina y no Guarischi. Reconciliar con `agencias.csv`.
+Reconciliación (2026-11-08): **La Esquina Automotores** es una agencia de **Concordia** (San Lorenzo Este 149) con demo pero **sin fila en `agencias.csv`**; **Guarischi** está en el CSV pero **no tiene demo**. No son la misma agencia. Pendiente: sumar La Esquina al CSV con fuente y generar la demo de Guarischi (con backup).
 
 ## 6. Despliegue (Cloudflare Pages, **sin Git conectado**, subida directa)
 Desde `demos-agencias\<agencia>\_site`:
@@ -75,6 +75,7 @@ Proyectos: `demo-colon-autos`, `demo-lucar-s-automotores`, `demo-uruguay-autos`,
 2. **`_site` es edición manual.** Los cambios se hicieron directo en `_site` por consola. El código fuente de cada agencia puede no tenerlos y `npm run site` los **sobrescribiría**. **Decisión pendiente:** `_site` oficial o llevar los cambios al fuente. Hasta decidir: no correr `npm run site` sobre una agencia sin backup.
 3. Esto contradice la regla 3 de `CLAUDE.md`; vale para la plantilla, no para las demos mientras no se decida lo anterior.
 4. Cada agencia tenía `/_site/` en su `.gitignore`; se quitó **solo en `repo-nuevo`** para que se respalde (y, al ser repo público, esas demos quedan públicas: solo datos públicos de ejemplo, sin fotos reales).
+5. **Fotos reales en las demos:** `demos-agencias/_fotos/<agencia>/` tiene fotos descargadas de Facebook el 2026-11-08 (origen en `fotos-origen.json`) y están en el repo público. Contradice la regla 6 de `CLAUDE.md` y `docs/OPERACION-IA.md` (solo relleno en prospección). **Decisión pendiente del dueño:** sacarlas, reemplazarlas por relleno, o conseguir autorización y cambiar la regla.
 
 ## 9. Trampas de PowerShell (ya pasaron)
 - Bloques largos pegados pueden trabarse con `>>`: **Ctrl+C** y pegar de a uno.
