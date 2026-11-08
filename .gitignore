@@ -7,3 +7,9 @@
 .env.*
 Thumbs.db
 .DS_Store
+
+# Datos de prospeccion (no se suben)
+/prospeccion/
+/ESTADO.md
+/agencias.csv
+/mensajes.md

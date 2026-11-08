@@ -1,0 +1,36 @@
+PROMPT DE ARRANQUE — pegar al iniciar una sesión nueva
+=======================================================
+
+Repo (PÚBLICO): https://github.com/hnk375561-lab/PLANILLA-AGENCIAS (rama main).
+
+1) Cloná con clon parcial, sin descargar fotos ni demos, y traé SOLO estos archivos:
+
+   git clone --depth 1 --filter=blob:none --sparse https://github.com/hnk375561-lab/PLANILLA-AGENCIAS.git
+   cd PLANILLA-AGENCIAS
+   git sparse-checkout set --no-cone /CONTEXTO.md /CLAUDE.md /docs/OPERACION-IA.md /docs/DEPLOY-CLOUDFLARE.md
+   git checkout
+
+   Si algún archivo no aparece, decilo; no lo inventes ni abras otros.
+
+2) prospeccion/ESTADO.md NO está en GitHub (tiene la lista de agencias prospectadas). El dueño lo pega en el chat o lo adjunta al empezar. Si no lo tenés, pedilo en una línea y mientras tanto trabajá solo con lo que sí leíste.
+
+3) Leé en este orden: CONTEXTO.md -> CLAUDE.md -> ESTADO.md (el que te pasó el dueño) -> docs/OPERACION-IA.md. (docs/DEPLOY-CLOUDFLARE.md solo si hay que publicar.)
+
+4) No abras imágenes, la carpeta demos-agencias/, agencias.csv ni mensajes.md salvo que te lo pida.
+
+5) Respondeme, en español rioplatense y como máximo 10 líneas:
+   - qué es el proyecto y en qué fase está,
+   - quién hace qué (vos vs. el dueño),
+   - qué agencias están activas y cuáles no se tocan,
+   - qué discrepancias abiertas hay (sección "Discrepancias abiertas" de ESTADO.md),
+   - cuál es el próximo paso y cuál es el único gesto que me toca a mí, si hay.
+
+6) Después seguí desde "Próximo paso" sin preguntarme qué sigue. Cuando haya que pegar algo en PowerShell (Windows), dame comandos exactos, un bloque por vez. Antes de cerrar la sesión, dame el ESTADO.md actualizado completo para que lo guarde (no se sube a GitHub) y actualizá la fecha de CONTEXTO.md.
+
+REGLAS RÁPIDAS (detalle en CLAUDE.md)
+- Cero datos inventados: sin fuente (URL + fecha) no se carga; si no aparece, queda vacío y anotado.
+- Sin datos personales; sin fotos ni stock reales en demos.
+- Mensajes 1 a 1, con aviso de "demo con datos de ejemplo" y línea de baja; un solo seguimiento.
+- Chita (contactada por el dueño) y Autocam (descartada): no tocar.
+- No correr "npm run site" sobre una agencia sin backup (las _site tienen ediciones manuales).
+- Repo público: nada de prospectos en git (prospeccion/ESTADO.md, agencias.csv y mensajes.md quedan locales).
