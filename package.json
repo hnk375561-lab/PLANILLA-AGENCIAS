@@ -36,6 +36,7 @@
     "test:t5": "python3 scripts/e2e-t5-comparalo.py"
   },
   "devDependencies": {
+    "playwright": "^1.65.0",
     "sharp": "^0.33.5"
   },
   "engines": {

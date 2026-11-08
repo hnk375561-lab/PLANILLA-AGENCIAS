@@ -616,9 +616,10 @@ const histFondo = async (ruta) => { try { const { fondoDifuminado } = await impo
 const recorridoHtml = async (unit, foto, fondo, h) => {
   const r = D.historias && D.historias.recorrido;
   if (!r || r.activa !== true) return null;
-  const tarjAuto = autos.filter((x) => String(x.id) !== String(unit.id) && !x.vendida && Array.isArray(x.fotos) && x.fotos.length).slice(0, 12)
+  const tarjAuto = autos.filter((x) => String(x.id) !== String(unit.id) && !x.vendida && Array.isArray(x.fotos) && x.fotos.length).slice(0, Math.max(1, (Number(r.maximo) || 13) - 1))
     .map((x) => { const f = x.fotos[Math.min(1, x.fotos.length - 1)]; return { unidadId: x.id, foto: f.src, ancho: f.width, alto: f.height }; });
-  const lista = ((r.tarjetas && r.tarjetas.length) ? r.tarjetas : tarjAuto).map((t) => {
+  const maxTarj = Math.max(1, (Number(r.maximo) || 13) - 1);   // r.maximo = cantidad total de unidades del recorrido (incluida la destacada)
+  const lista = ((r.tarjetas && r.tarjetas.length) ? r.tarjetas : tarjAuto).slice(0, maxTarj).map((t) => {
     const u = autos.find((x) => String(x.id) === String(t.unidadId));
     if (!u || u.vendida || !t.foto || !fs.existsSync(path.join(root, t.foto))) return null;
     return { u, t };

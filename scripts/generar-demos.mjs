@@ -108,7 +108,7 @@ function generar(a) {
   const dir = path.join(outDir, a.slug);
   fs.rmSync(dir, { recursive: true, force: true });
   fs.cpSync(root, dir, { recursive: true, filter: copyFilter });
-  fs.symlinkSync(nodeModules, path.join(dir, 'node_modules'), 'dir');
+  fs.symlinkSync(nodeModules, path.join(dir, 'node_modules'), 'junction');
   const url = `https://${a.proyecto}.pages.dev`;
 
   const args = ['scripts/nuevo-cliente.mjs', '--nombre', a.nombre, '--previewurl', url];

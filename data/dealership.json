@@ -152,14 +152,15 @@
       "region": "Recorrido horizontal por la unidad destacada y las unidades del stock",
       "saltar": "Saltar el recorrido",
       "siguiente": "#financiacion",
-      "inicial": 6,
+      "inicial": 3,
       "paso": 6,
       "textos": {
         "cargarMas": "Cargar {n} más",
         "mostrando": "Mostrando {a} de {b} unidades",
         "agregadas": "Se agregaron {n} unidades. Mostrando {a} de {b}."
       },
-      "tarjetas": []
+      "tarjetas": [],
+      "maximo": 3
     },
     "destacada": {
       "activa": true,

@@ -1,2 +1,9 @@
 /_site/
 /node_modules/
+
+.wrangler/
+*.zip
+.env
+.env.*
+Thumbs.db
+.DS_Store
