@@ -1,0 +1,2 @@
+.car-ph{position:relative}
+.car-tag{position:absolute;left:10px;bottom:10px;z-index:5;padding:6px 14px 6px 10px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--y,#e0202b);clip-path:var(--cut,polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%));pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.4)}

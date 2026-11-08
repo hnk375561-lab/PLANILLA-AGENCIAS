@@ -1,0 +1,210 @@
+{
+  "identity": {
+    "tradeName": "LF Autos",
+    "marcaCorta": "LA",
+    "legalName": "LF Autos",
+    "cuit": null,
+    "publicRegistry": null
+  },
+  "location": {
+    "address": "Av. Del Valle 1425",
+    "postalCode": "E2820",
+    "city": "Gualeguaychú",
+    "partido": "Gualeguaychú",
+    "province": "Entre Ríos",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=LF%20Autos%2C%20Av.%20Del%20Valle%201425%2C%20Gualeguaych%C3%BA%2C%20Entre%20R%C3%ADos%2C%20Argentina",
+    "coordenadas": {
+      "lat": -33.0094,
+      "lng": -58.5172,
+      "fuentes": [
+        "https://www.openstreetmap.org/"
+      ],
+      "verificacion": "Cargadas por nuevo-cliente.mjs: verificar buscando la dirección en openstreetmap.org.",
+      "consultado": "2026-11-05"
+    },
+    "conflicto": {
+      "estado": "sin_conflicto",
+      "candidatos": [],
+      "nota": "Plantilla: sin direcciones en conflicto."
+    }
+  },
+  "contact": {
+    "nombre": "LF Autos",
+    "phone": null,
+    "phoneTel": null,
+    "whatsApp": null,
+    "whatsAppDisplay": null,
+    "whatsAppConfirmed": false,
+    "whatsAppConfirmadoNota": "Sin WhatsApp cargado en la demo.",
+    "email": null,
+    "facebook": "https://www.facebook.com/p/LF-Autos-100063696782670/",
+    "instagram": "",
+    "tiktok": null,
+    "youtube": null,
+    "stockUrl": null,
+    "confirmadoPorDueno": true,
+    "conflicto": {
+      "candidatos": []
+    },
+    "publicosPendientes": [],
+    "contactosIndicadosPorSolicitante": [],
+    "notaContactos": "Plantilla: sin contactos adicionales."
+  },
+  "hours": {
+    "display": true,
+    "corto": "L-V 9–13 y 15–19 · S 9–13",
+    "semana": [
+      {
+        "dias": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "etiqueta": "Lunes a viernes",
+        "rangos": [
+          [
+            "09:00",
+            "13:00"
+          ],
+          [
+            "15:00",
+            "19:00"
+          ]
+        ]
+      },
+      {
+        "dias": [
+          6
+        ],
+        "etiqueta": "Sábados",
+        "rangos": [
+          [
+            "09:00",
+            "13:00"
+          ]
+        ]
+      }
+    ],
+    "domingo": "Cerrado"
+  },
+  "services": {
+    "published": [
+      {
+        "clave": "vehiculos-usados",
+        "texto": "Vehículos usados",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "0km",
+        "texto": "Vehículos 0 km",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "financiacion",
+        "texto": "Financiación y cuotas fijas",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "permuta",
+        "texto": "Permutas",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "consignacion",
+        "texto": "Consignaciones",
+        "fuente": "https://www.example.com/servicios"
+      }
+    ]
+  },
+  "reviews": {
+    "publicadas": false,
+    "googleUrl": null,
+    "puntaje": null,
+    "cantidad": null,
+    "fecha": null,
+    "escala": 5
+  },
+  "presentacion": {
+    "antiguedad": "Multimarcas · Vehículos usados",
+    "fuenteAntiguedad": "https://www.example.com/nosotros",
+    "destacadoNumero": "12",
+    "destacadoEtiqueta": "unidades de ejemplo",
+    "destacadoSub": "reemplazar por un dato real del cliente"
+  },
+  "publicacion": {
+    "official": false,
+    "publicIndexing": false,
+    "siteUrl": null,
+    "previewUrl": "https://demo-lf-autos.pages.dev",
+    "medicion": {
+      "activo": false,
+      "endpoint": null,
+      "nota": "T8: apagada. Requiere autorización del dueño, endpoint https y publicIndexing true; en la demo nunca corre."
+    },
+    "restosProhibidos": [
+      "Lucar's Automotores",
+      "Uruguay Autos",
+      "MC Automotores",
+      "Litoral Motors Gualeguaychú",
+      "Eskina Autos",
+      "Regner Automotores",
+      "Colon Autos",
+      "Centro Automotores Colón",
+      "La Esquina Automotores"
+    ]
+  },
+  "historias": {
+    "recorrido": {
+      "activa": true,
+      "etiqueta": "Recorrido por el stock",
+      "region": "Recorrido horizontal por la unidad destacada y las unidades del stock",
+      "saltar": "Saltar el recorrido",
+      "siguiente": "#financiacion",
+      "inicial": 3,
+      "paso": 6,
+      "textos": {
+        "cargarMas": "Cargar {n} más",
+        "mostrando": "Mostrando {a} de {b} unidades",
+        "agregadas": "Se agregaron {n} unidades. Mostrando {a} de {b}."
+      },
+      "tarjetas": [],
+      "maximo": 3
+    },
+    "destacada": {
+      "activa": true,
+      "unidadId": null,
+      "foto": null,
+      "encuadre": {
+        "escritorio": "contain-blur",
+        "movil": "contain-blur",
+        "focoMovil": "50% 60%"
+      },
+      "textos": {
+        "eyebrow": "Unidad destacada",
+        "titulo": null,
+        "boton": "Conocé esta unidad",
+        "cerrar": "Cerrar",
+        "verFicha": "Ver ficha completa",
+        "pausar": "Pausar animación",
+        "reanudar": "Reanudar animación",
+        "repetir": "Repetir animación",
+        "controles": "Control de la animación"
+      },
+      "datos": [
+        "anio",
+        "km",
+        "motor",
+        "transmision",
+        "combustible",
+        "color"
+      ]
+    },
+    "local": {
+      "activa": false,
+      "motivo": "Sin fotos propias autorizadas del local.",
+      "fotos": []
+    }
+  }
+}

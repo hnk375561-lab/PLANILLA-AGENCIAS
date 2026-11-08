@@ -1,0 +1,100 @@
+﻿ 136:     for (var i = 0; i < 8 && a && a !== document.body; i++, a = a.parentElement) {
+ 137:       var p = a.parentElement;
+ 138:       if (!p) return null;
+ 139:       if (/^(UL|OL|TABLE|TBODY|THEAD|TR|DL|SELECT|BUTTON|A)$/.test(p.tagName)) continue;
+ 140:       var d = getComputedStyle(a).display;
+ 141:       if (!/^(block|flex|grid|flow-root|list-item)$/.test(d)) continue;
+ 142:       if (a.getBoundingClientRect().width < 160) continue;
+ 143:       if (flowSafe(p)) return a;
+ 144:     }
+ 145:     return null;
+ 146:   }
+ 147: 
+ 148:   /* ---------- estructura general ---------- */
+ 149:   var bar, gap;
+ 150:   function estructura() {
+ 151:     if (!document.querySelector('.dx-top')) {
+ 152:       document.body.insertBefore(
+ 153:         mk('div', 'dx-top', ico() + '<span><b>Sitio de demostraciÃ³n.</b> Hay datos de ejemplo y datos sin verificar.</span><button type="button" class="dx-link" data-dx-open>Ver detalle</button>'),
+ 154:         document.body.firstChild);
+ 155:     }
+ 156:     if (!document.querySelector('.dx-marca')) {
+ 157:       var m = mk('div', 'dx-marca');
+ 158:       m.style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+ 159:       document.body.appendChild(m);
+ 160:     }
+ 161:     if (!document.querySelector('.dx-pie')) {
+ 162:       document.body.appendChild(mk('div', 'dx-pie',
+ 163:         '<b>Sitio de demostraciÃ³n, no es el sitio oficial.</b><br>Los vehÃ­culos, precios, fotos y equipamiento son de ejemplo. El horario, el telÃ©fono, el WhatsApp, la direcciÃ³n y las reseÃ±as salen de fuentes pÃºblicas y no estÃ¡n confirmados con la agencia. Puede haber errores.'));
+ 164:     }
+ 165:     if (!document.querySelector('.dx-bar')) {
+ 166:       bar = mk('div', 'dx-bar',
+ 167:         ico() + '<span class="dx-bar-t"><b>Demo sin verificar.</b><span class="dx-long"> Autos, precios y fotos son de ejemplo. Horario, telÃ©fono, WhatsApp, direcciÃ³n y reseÃ±as no estÃ¡n confirmados con la agencia.</span></span><button type="button" data-dx-open>QuÃ© falta verificar</button>');
+ 168:       bar.setAttribute('role', 'note');
+ 169:       document.body.appendChild(bar);
+ 170:     }
+ 171:     if (!document.querySelector('.dx-gap')) {
+ 172:       gap = mk('div', 'dx-gap');
+ 173:       document.body.appendChild(gap);
+ 174:     }
+ 175:     bar = document.querySelector('.dx-bar');
+ 176:     gap = document.querySelector('.dx-gap');
+ 177:     if (bar && gap) gap.style.height = (bar.offsetHeight + 24) + 'px';
+ 178:   }
+ 179: 
+ 180:   /* oculta la barra vieja del script anterior (demo-aviso.js), que queda tapada por esta */
+ 181:   function ocultarViejo() {
+ 182:     var k = document.body.children;
+ 183:     for (var i = 0; i < k.length; i++) {
+ 184:       var e = k[i];
+ 185:       if (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(e.tagName) || e.classList.contains('dx-skip') || e.getAttribute('data-dx-old')) continue;
+ 186:       var t = (e.textContent || '').replace(/\s+/g, ' ');
+ 187:       if (t.length < 400 && /versi[oÃ³]n de demostraci[oÃ³]n/i.test(t)) {
+ 188:         var pos = getComputedStyle(e).position;
+ 189:         if (pos === 'fixed' || pos === 'sticky') {
+ 190:           e.setAttribute('data-dx-old', '1');
+ 191:           e.style.setProperty('display', 'none', 'important');
+ 192:         }
+ 193:       }
+ 194:     }
+ 195:   }
+ 196: 
+ 197:   /* ---------- ventana de detalle ---------- */
+ 198:   function abrirInfo() {
+ 199:     if (document.querySelector('.dx-ov')) return;
+ 200:     var ov = mk('div', 'dx-ov');
+ 201:     var b = mk('div', 'dx-box',
+ 202:       '<div class="dx-head">' + ico() + '<div><h2>Sitio de demostraciÃ³n</h2><p>Vista previa: no es el sitio oficial de la agencia.</p></div></div>' +
+ 203:       '<div class="dx-body">' +
+ 204:       '<p class="dx-lead">Armamos esta pÃ¡gina para mostrar cÃ³mo podrÃ­a verse. TodavÃ­a no estÃ¡ terminada ni verificada y puede tener errores. Esto es lo que tenÃ©s que saber:</p>' +
+ 205:       '<div class="dx-grp a"><h3>Datos de ejemplo</h3><p class="dx-sub">Son de muestra y no corresponden a stock real.</p><ul>' +
+ 206:       '<li>Autos y unidades publicadas</li><li>Fotos</li><li>Precios y monedas</li><li>AÃ±o, kilometraje, color y equipamiento</li><li>Disponibilidad: una unidad que ves acÃ¡ puede no existir</li></ul></div>' +
+ 207:       '<div class="dx-grp b"><h3>Tomados de fuentes pÃºblicas, sin confirmar</h3><p class="dx-sub">La agencia todavÃ­a no los revisÃ³.</p><ul>' +
+ 208:       '<li>Horario de atenciÃ³n</li><li>TelÃ©fono y WhatsApp</li><li>DirecciÃ³n y mapa</li><li>ReseÃ±as y puntaje</li></ul></div>' +
+ 209:       '<div class="dx-grp c"><h3>Que no funcionan de verdad</h3><p class="dx-sub">No los uses para consultas reales.</p><ul>' +
+ 210:       '<li>Formularios de consulta, visita, financiaciÃ³n y tasaciÃ³n: pueden no llegar a la agencia</li><li>Condiciones de financiaciÃ³n y valuaciÃ³n de usados: son ilustrativas</li></ul></div>' +
+ 211:       '<p class="dx-do"><b>Antes de ir, reservar o pagar,</b> confirmÃ¡ todo directamente con la agencia. Nada de lo que ves acÃ¡ es una oferta, una reserva ni un compromiso de venta.</p>' +
+ 212:       '</div>');
+ 213:     b.setAttribute('role', 'dialog');
+ 214:     b.setAttribute('aria-modal', 'true');
+ 215:     b.setAttribute('aria-label', 'Aviso de sitio de demostraciÃ³n');
+ 216:     var foot = document.createElement('div');
+ 217:     foot.className = 'dx-foot';
+ 218:     var btn = document.createElement('button');
+ 219:     btn.type = 'button';
+ 220:     btn.textContent = 'Entendido, ver la demo';
+ 221:     function cerrar() {
+ 222:       try { sessionStorage.setItem('dx-ok', '1'); } catch (e) {}
+ 223:       ov.remove();
+ 224:       document.removeEventListener('keydown', esc, true);
+ 225:     }
+ 226:     function esc(ev) { if (ev.key === 'Escape') cerrar(); }
+ 227:     btn.onclick = cerrar;
+ 228:     ov.addEventListener('click', function (ev) { if (ev.target === ov) cerrar(); });
+ 229:     document.addEventListener('keydown', esc, true);
+ 230:     foot.appendChild(btn);
+ 231:     b.appendChild(foot);
+ 232:     ov.appendChild(b);
+ 233:     document.body.appendChild(ov);
+ 234:     btn.focus();
+ 235:   }

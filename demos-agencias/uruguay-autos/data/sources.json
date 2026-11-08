@@ -1,0 +1,11 @@
+{
+  "fuentes": [
+    {
+      "id": "ejemplo",
+      "url": "https://www.example.com/ejemplo",
+      "consultado": "2026-11-05",
+      "nota": "Fuente de ejemplo de la plantilla. Reemplazar por las fuentes reales del cliente (su Instagram, su ficha de Google, su listado)."
+    }
+  ],
+  "guiaGeneral": []
+}

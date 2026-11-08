@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "id": "P1", "tema": "Cargar los datos reales del cliente en data/dealership.json (nombre, dirección, WhatsApp, horarios, redes)", "estado": "abierto", "bloqueante": true },
+    { "id": "P2", "tema": "Reemplazar data/vehicles.json y las fotos de images/ por el stock real, con autorización escrita del dueño para usar las fotos", "estado": "abierto", "bloqueante": true },
+    { "id": "P3", "tema": "Confirmar el WhatsApp con el dueño y poner contact.whatsAppConfirmed en true", "estado": "abierto", "bloqueante": true },
+    { "id": "P4", "tema": "Dominio, publicIndexing true y aprobación del dueño antes de salir de la demo", "estado": "abierto", "bloqueante": true }
+  ]
+}

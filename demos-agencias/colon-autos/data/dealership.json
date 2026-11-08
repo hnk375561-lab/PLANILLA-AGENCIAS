@@ -1,0 +1,211 @@
+{
+  "identity": {
+    "tradeName": "Colon Autos",
+    "marcaCorta": "CA",
+    "legalName": "Colon Autos",
+    "cuit": null,
+    "publicRegistry": null
+  },
+  "location": {
+    "address": "San Martín 1109",
+    "postalCode": "E3280",
+    "city": "Colón",
+    "partido": "Colón",
+    "province": "Entre Ríos",
+    "mapsUrl": "https://maps.google.com/maps?cid=2589109019132700509",
+    "coordenadas": {
+      "lat": -32.2304584,
+      "lng": -58.1527556,
+      "fuentes": [
+        "Ficha de Google Maps (Places)"
+      ],
+      "verificacion": "Coordenadas y dirección de la ficha de Google Maps, consultada el 2026-11-07.",
+      "consultado": "2026-11-05"
+    },
+    "conflicto": {
+      "estado": "sin_conflicto",
+      "candidatos": [],
+      "nota": "Plantilla: sin direcciones en conflicto."
+    }
+  },
+  "contact": {
+    "nombre": "Colon Autos",
+    "phone": "03447 45-3127",
+    "phoneTel": "+543447453127",
+    "whatsApp": null,
+    "whatsAppDisplay": null,
+    "whatsAppConfirmed": false,
+    "whatsAppConfirmadoNota": "Sin WhatsApp cargado en la demo.",
+    "email": "colonautosmultimarcas@gmail.com",
+    "facebook": "https://www.facebook.com/Colonautos",
+    "instagram": "colon_autos",
+    "tiktok": null,
+    "youtube": null,
+    "stockUrl": null,
+    "confirmadoPorDueno": true,
+    "conflicto": {
+      "candidatos": []
+    },
+    "publicosPendientes": [],
+    "contactosIndicadosPorSolicitante": [],
+    "notaContactos": "Plantilla: sin contactos adicionales.",
+    "phoneFuente": "Teléfono fijo publicado por fuentes públicas (https://www.facebook.com/Colonautos); no confirmado por la agencia."
+  },
+  "hours": {
+    "display": true,
+    "corto": "L-V 9–13 y 16:30–20:30 · S 9–13",
+    "semana": [
+      {
+        "dias": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "etiqueta": "Lunes a viernes",
+        "rangos": [
+          [
+            "09:00",
+            "13:00"
+          ],
+          [
+            "16:30",
+            "20:30"
+          ]
+        ]
+      },
+      {
+        "dias": [
+          6
+        ],
+        "etiqueta": "Sábados",
+        "rangos": [
+          [
+            "09:00",
+            "13:00"
+          ]
+        ]
+      }
+    ],
+    "domingo": "Cerrado"
+  },
+  "services": {
+    "published": [
+      {
+        "clave": "vehiculos-usados",
+        "texto": "Vehículos usados",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "0km",
+        "texto": "Vehículos 0 km",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "financiacion",
+        "texto": "Financiación y cuotas fijas",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "permuta",
+        "texto": "Permutas",
+        "fuente": "https://www.example.com/servicios"
+      },
+      {
+        "clave": "consignacion",
+        "texto": "Consignaciones",
+        "fuente": "https://www.example.com/servicios"
+      }
+    ]
+  },
+  "reviews": {
+    "publicadas": true,
+    "googleUrl": "https://maps.google.com/maps?cid=2589109019132700509",
+    "puntaje": 4.8,
+    "cantidad": 17,
+    "fecha": "2026-11-07",
+    "escala": 5
+  },
+  "presentacion": {
+    "antiguedad": "Multimarcas · Vehículos usados",
+    "fuenteAntiguedad": "https://www.example.com/nosotros",
+    "destacadoNumero": "12",
+    "destacadoEtiqueta": "unidades de ejemplo",
+    "destacadoSub": "reemplazar por un dato real del cliente"
+  },
+  "publicacion": {
+    "official": false,
+    "publicIndexing": false,
+    "siteUrl": null,
+    "previewUrl": "https://demo-colon-autos.pages.dev",
+    "medicion": {
+      "activo": false,
+      "endpoint": null,
+      "nota": "T8: apagada. Requiere autorización del dueño, endpoint https y publicIndexing true; en la demo nunca corre."
+    },
+    "restosProhibidos": [
+      "Lucar's Automotores",
+      "Uruguay Autos",
+      "MC Automotores",
+      "Litoral Motors Gualeguaychú",
+      "LF Autos",
+      "Eskina Autos",
+      "Regner Automotores",
+      "Centro Automotores Colón",
+      "La Esquina Automotores"
+    ]
+  },
+  "historias": {
+    "recorrido": {
+      "activa": true,
+      "etiqueta": "Recorrido por el stock",
+      "region": "Recorrido horizontal por la unidad destacada y las unidades del stock",
+      "saltar": "Saltar el recorrido",
+      "siguiente": "#financiacion",
+      "inicial": 3,
+      "paso": 6,
+      "textos": {
+        "cargarMas": "Cargar {n} más",
+        "mostrando": "Mostrando {a} de {b} unidades",
+        "agregadas": "Se agregaron {n} unidades. Mostrando {a} de {b}."
+      },
+      "tarjetas": [],
+      "maximo": 3
+    },
+    "destacada": {
+      "activa": true,
+      "unidadId": null,
+      "foto": null,
+      "encuadre": {
+        "escritorio": "contain-blur",
+        "movil": "contain-blur",
+        "focoMovil": "50% 60%"
+      },
+      "textos": {
+        "eyebrow": "Unidad destacada",
+        "titulo": null,
+        "boton": "Conocé esta unidad",
+        "cerrar": "Cerrar",
+        "verFicha": "Ver ficha completa",
+        "pausar": "Pausar animación",
+        "reanudar": "Reanudar animación",
+        "repetir": "Repetir animación",
+        "controles": "Control de la animación"
+      },
+      "datos": [
+        "anio",
+        "km",
+        "motor",
+        "transmision",
+        "combustible",
+        "color"
+      ]
+    },
+    "local": {
+      "activa": false,
+      "motivo": "Sin fotos propias autorizadas del local.",
+      "fotos": []
+    }
+  }
+}

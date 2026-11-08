@@ -1,0 +1,247 @@
+// Valida que los datos y las páginas no se contradigan y que no se publique nada sin fuente.
+// Uso: node scripts/validate-dealership.mjs [--prod]   (--prod = puerta de salida a producción)
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PROD = process.argv.includes('--prod');
+const rd = (f) => fs.readFileSync(path.join(root, f), 'utf8');
+const errors = [];
+const warns = [];
+const err = (m) => errors.push(m);
+const json = (f) => { try { return JSON.parse(rd(f)); } catch (e) { err(`${f} no es JSON válido: ${e.message}`); return null; } };
+
+// El sitio se genera con CSS inline; una declaración inválida se replica en todas las rutas.
+const cssFiles = ['scripts/estilos.css', 'css/reserva.css'];
+for (const f of cssFiles) {
+  const css = rd(f);
+  if (/rgba\([^)]*\),\s*\.?\d+\)/.test(css)) err(`${f}: hay una llamada rgba() mal formada`);
+  if (/linear-gradient\([^)]*rgba\([^)]*\),\s*\.?\d+/.test(css)) err(`${f}: hay un gradiente con alpha mal formado`);
+}
+
+const d = json('data/dealership.json');
+const a = json('data/vehicles.json');
+const pend = json('data/pendientes.json');
+json('data/sources.json');
+const rev = json('data/autos-en-revision.json');
+
+if (d && a) {
+  const pages = ['index.html', 'reserva.html', 'privacidad.html', '404.html'];
+  const demo = d.publicacion.publicIndexing === false;
+  const html = Object.fromEntries(pages.map((p) => [p, rd(p)]));
+  const robots = rd('robots.txt');
+
+  // --- indexación coherente ---
+  if (demo !== /Disallow:\s*\/\s*$/m.test(robots)) err('robots.txt no coincide con publicacion.publicIndexing');
+  if (demo && d.publicacion.official) err('official debe ser false mientras el sitio sea demo');
+  if (demo === fs.existsSync(path.join(root, 'sitemap.xml'))) err('sitemap.xml debe existir solo cuando publicIndexing es true');
+  for (const p of pages) {
+    const h = html[p];
+    if (demo !== /noindex/.test(h)) err(`${p}: noindex no coincide con publicacion.publicIndexing`);
+    if (demo && !/data-demo-note/.test(h) && p !== '404.html') err(`${p}: falta el aviso de demo`);
+    if (!demo && /data-demo-note/.test(h)) err(`${p}: no debe tener aviso de demo en producción`);
+    if (p !== '404.html' || true) { const og = (h.match(/<meta property="og:image" content="([^"]*)"/) || [])[1]; if (!og || !/^https:\/\//.test(og)) err(`${p}: og:image debe ser una URL absoluta https (hoy: ${og || 'ausente'}); sin eso WhatsApp y las redes muestran el enlace sin imagen. Cargá publicacion.previewUrl o corré el build con el remoto git.`); }
+    if ((h.match(/<h1[\s>]/g) || []).length !== 1) err(`${p}: debe tener un único h1`);
+    if (/href="#"/.test(h)) err(`${p}: href="#"`);
+    if (/href="http:\/\//.test(h)) err(`${p}: enlace http:// sin cifrar`);
+    for (const m of h.matchAll(/<img\b[^>]*>/g)) {
+      if (!/\balt=/.test(m[0])) err(`${p}: img sin alt`);
+      if (!/\bwidth=/.test(m[0]) || !/\bheight=/.test(m[0])) err(`${p}: img sin width/height`);
+    }
+    for (const m of h.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) if (!/noopener/.test(m[0])) err(`${p}: enlace externo sin noopener`);
+    for (const m of h.matchAll(/(?:src|href)="([^"]+)"/g)) {
+      const u = m[1];
+      if (/^(https?:|mailto:|tel:|#|\.\/?#?)/.test(u) || u === './') continue;
+      const local = u.split(/[?#]/)[0].replace(/^\/[a-z0-9._-]+\//i, ''); // la 404 usa rutas absolutas bajo el nombre del repo (GitHub Pages)
+      if (local && !fs.existsSync(path.join(root, local))) err(`${p}: referencia a archivo inexistente ${u}`);
+    }
+    for (const m of h.matchAll(/url\(([^)]+)\)/g)) { const u = m[1].replace(/["']/g, '').trim(); if (u.startsWith('data:') || u.startsWith('#')) continue; if (!fs.existsSync(path.join(root, u))) err(`${p}: css url() a archivo inexistente ${m[1]}`); }
+  }
+
+  const idx = html['index.html'];
+  const visible = pages.map((p) => html[p]).join('\n').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '');
+  const visNoCars = visible.replace(/<li class="car[^\"]*"[^>]*>[\s\S]*?<\/li>/g, '')
+    /* Unidad destacada: los datos de la unidad (año, km, precio con fecha) salen de vehicles.json y se tratan como los de una tarjeta; el resto del texto de la sección sí se valida. */
+    .replace(/<div class="hist-info">[\s\S]*?<div class="row">/g, '<div class="row">')
+    /* Recorrido: cada tarjeta lleva nombre, marca, año y km reales de su unidad (vehicles.json), igual que una tarjeta del catálogo. */
+    .replace(/<a class=\"rec__card[^\"]*\"[\s\S]*?<\/a>/g, '');
+
+  // --- datos del negocio ---
+  const L = d.location;
+  const hx = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');   // el HTML escapa & < >
+  if (![`${L.address}, ${L.city}`, L.address].some((t) => idx.includes(t) || idx.includes(hx(t)))) err('index.html: falta la dirección');
+  if (!idx.includes(d.contact.facebook)) err('index.html: falta el enlace a Facebook');
+  if (d.contact.instagram) { if (!idx.includes(`instagram.com/${d.contact.instagram}/`)) err('index.html: falta el enlace a Instagram'); }
+  else if (/instagram\.com\/\//.test(idx)) err('index.html: hay enlaces a Instagram sin perfil cargado (instagram.com//)');
+  if (!idx.includes('<title>' + d.identity.tradeName) && !idx.includes('<title>' + hx(d.identity.tradeName))) err('index.html: el title debe empezar con el nombre comercial');
+  if (d.identity.cuit !== null) err('CUIT debe ser null hasta confirmación');
+  try { JSON.parse(idx.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]); } catch { err('index.html: JSON-LD ausente o inválido'); }
+
+  // --- contacto: conflicto de teléfonos ---
+  const c = d.contact;
+  if (c.whatsApp && c.whatsAppConfirmed === true && c.confirmadoPorDueno === true) {
+    for (const p of ['index.html']) if (!html[p].includes(`wa.me/${c.whatsApp}`)) err(`${p}: WhatsApp no coincide con dealership.json`);
+  } else if (c.whatsApp) {
+    for (const p of pages) if (html[p].includes(`wa.me/${c.whatsApp}`)) err(`${p}: WhatsApp publicado sin confirmación documental coherente`);
+  } else {
+    // Sin WhatsApp: nunca wa.me. Un enlace tel: solo es válido si hay un teléfono cargado en dealership.json (phoneTel, con su fuente).
+    for (const p of pages) if (/wa\.me/.test(html[p]) || (!c.phoneTel && /tel:/.test(html[p]))) err(`${p}: hay teléfono o WhatsApp publicado sin confirmar`);
+  }
+  if (c.phoneTel && !idx.includes(`tel:${c.phoneTel}`)) err('index.html: teléfono no coincide con dealership.json');
+  if (!c.confirmadoPorDueno) {
+    const digits = (s) => s.replace(/\D/g, '');
+    const page = digits(visible + pages.map((p) => html[p].match(/href="[^"]*"/g)?.join('') ?? '').join(''));
+    for (const k of c.conflicto?.candidatos ?? []) if (page.includes(digits(k.numero))) err(`El número ${k.numero} aparece en el sitio sin confirmación`);
+  }
+  const correos = (visible.match(/[\w.+-]+@(?:hotmail|gmail|yahoo)[\w.]*/gi) || []).map((x) => x.toLowerCase());
+  if (correos.some((x) => x !== String(c.email || '').toLowerCase())) err('hay un correo publicado distinto del cargado en contact.email');
+  if (c.email) console.log('aviso: contact.email se publica en el sitio: confirmar con el cliente que es un correo institucional (CLAUDE.md regla 5)');
+
+  // --- afirmaciones sin fuente ---
+  // Cada servicio solo puede aparecer si tiene su `clave` en services.published (con fuente citada).
+  const claves = new Set(d.services.published.map((x) => x.clave).filter(Boolean));
+  // Regla 10: reseñas solo con puntaje, cantidad, fecha y enlace de Google (antes la condición estaba invertida: !publicadas)
+  if (d.reviews?.publicadas && d.reviews?.googleUrl && d.reviews?.fecha && d.reviews?.puntaje && d.reviews?.cantidad) claves.add('resenas');
+  for (const x of d.services.published) if (!x.fuente) err(`services.published: «${x.texto}» no tiene fuente`);
+  const vetadas = [
+    [/gestor[ií]a|taller|entrega inmediata|reserva online|\btasas?\b/i, 'servicio o condición sin fuente', null],
+    [/\bcuotas?\b(?!\s+fijas\b)/i, 'cuotas sin fuente', null],
+    [/\bcuotas?\s+fijas\b/i, 'cuotas fijas sin fuente', 'financiacion'],
+    [/consignaci/i, 'consignación sin fuente', 'consignacion'],
+    [/permut|parte de pago|tom[aá]mos tu usado/i, 'permuta sin fuente', 'permuta'],
+    [/tasaci[oó]n/i, 'tasación sin fuente', 'tasacion'],
+    [/garant[ií]a/i, 'garantía sin fuente', 'garantia'],
+    [/\b0 ?km\b/i, '0 km sin fuente', '0km'],
+    [/rese[ñn]as?|estrellas|opiniones|\b\d[.,]\d\s?\/\s?(5|10)\b/i, 'valoración o reseñas sin verificar', 'resenas'],
+    [/\$\s?\d|US\$\s?\d|\d{1,3}(\.\d{3})+ ?km/i, 'precio o kilometraje fuera de una tarjeta de unidad', null],
+    [/c[aá]mara del comercio automotor|\bCCA\b/i, 'afiliación a la CCA no verificada', null],
+    [/adquirid[ao]|absorbid[ao]|renombrad[ao]/i, 'relación con el grupo sin redacción autorizada (P15)', null],
+  ];
+  for (const [re, why, clave] of vetadas) if ((!clave || !claves.has(clave)) && re.test(visNoCars)) err(`Texto no permitido en el sitio (${why}): ${re}`);
+  if (!d.hours.display && /horario|lunes a |\b\d{1,2}[:.]\d{2} ?(hs|a)\b/i.test(visible)) err('hay un horario publicado sin confirmar');
+  if (/verificad[oa]|confirmad[oa]/i.test(visible)) err('texto "verificado/confirmado" no permitido');
+  const publicados = d.services.published.map((s) => s.texto.toLowerCase());
+  if (!publicados.some((t) => t.includes('financiaci'))) err('services.published no incluye la financiación que muestra el sitio');
+
+  // --- stock ---
+  const nCards = (idx.match(/<li class="car[ "]/g) || []).length;
+  if (nCards !== a.autos.length) err(`index.html tiene ${nCards} tarjetas y data/vehicles.json tiene ${a.autos.length} unidades (correr npm run build)`);
+  const ids = new Set();
+  let fotosTotales = 0;
+  const porTipo = { Auto: 0, Moto: 0 };
+  for (const v of a.autos) {
+    if (!v.id || ids.has(v.id)) err(`vehicles.json: id faltante o repetido (${v.id})`);
+    ids.add(v.id);
+    if (!v.titulo) err(`vehicles.json ${v.id}: falta titulo`);
+    if (!['Auto', 'Moto'].includes(v.tipoVehiculo)) err(`vehicles.json ${v.id}: tipoVehiculo debe ser Auto o Moto`);
+    else porTipo[v.tipoVehiculo]++;
+    if (v.url != null && !/^https:\/\/\S+$/.test(v.url)) err(`vehicles.json ${v.id}: url debe ser un enlace https a la publicación o ficha de la unidad (o null)`);
+    if (v.precio && (!['ARS', 'USD'].includes(v.precio.moneda) || typeof v.precio.monto !== 'number' || !v.precio.fecha)) err(`vehicles.json ${v.id}: precio incompleto (moneda, monto y fecha)`);
+    if (v.km != null && typeof v.km !== 'number') err(`vehicles.json ${v.id}: km debe ser número`);
+    const years = [...String(v.titulo).matchAll(/\b(?:19|20)\d{2}\b/g)].map((m) => Number(m[0]));
+    if (years.length && v.anio != null && v.anio !== years.at(-1)) err(`vehicles.json ${v.id}: anio ${v.anio} no coincide con el año final del título (${years.at(-1)})`);
+    if (!idx.includes(v.titulo.replace(/&/g, '&amp;'))) err(`index.html: falta la unidad ${v.id}`);
+    if (!Array.isArray(v.fotos) || !v.fotos.length) err(`vehicles.json ${v.id}: falta la galería`);
+    else {
+      fotosTotales += v.fotos.length;
+      if (v.fuente?.fotosPublicadas !== v.fotos.length) err(`vehicles.json ${v.id}: recuento de fotos de fuente no coincide con la galería`);
+      const urlsFoto = new Set();
+      v.fotos.forEach((foto, i) => {
+        /* La fuente de la foto es opcional (fotos propias del cliente); si existe debe ser https y no repetirse. En producción cada foto necesita fuente o autorización registrada. */
+        if (foto.fuente != null && !/^https:\/\//.test(foto.fuente)) err(`vehicles.json ${v.id}: foto ${i + 1}: fuente debe ser https o null`);
+        if (foto.fuente) { if (urlsFoto.has(foto.fuente)) err(`vehicles.json ${v.id}: URL de foto repetida (${i + 1})`); urlsFoto.add(foto.fuente); }
+        else if (PROD && !(foto.autorizacion && foto.autorizacion.registrada === true)) err(`PROD: vehicles.json ${v.id}: foto ${i + 1} sin fuente ni autorización registrada`);
+        if (!(foto.width > 0 && foto.height > 0)) err(`vehicles.json ${v.id}: dimensiones ausentes en foto ${i + 1}`);
+        for (const k of ['src', 'thumb', ...(i === 0 ? ['card'] : [])]) {
+          const rel = foto[k];
+          if (typeof rel !== 'string' || !rel.startsWith('images/stock/')) { err(`vehicles.json ${v.id}: falta ruta local ${k} en foto ${i + 1}`); continue; }
+          const abs = path.resolve(root, rel);
+          if (!abs.startsWith(root + path.sep) || !fs.existsSync(abs)) err(`vehicles.json ${v.id}: archivo ${k} no existe o sale del repositorio: ${rel}`);
+        }
+      });
+    }
+  }
+  if (a.autos.length && !a.relevadoEl) err('vehicles.json: falta relevadoEl (fecha del relevamiento)');
+  if (a.resultadoPagina !== a.autos.length) err('vehicles.json: resultadoPagina no coincide con las fichas integradas');
+  if (a.conteoPorTipo?.autos !== porTipo.Auto || a.conteoPorTipo?.motos !== porTipo.Moto) err('vehicles.json: conteoPorTipo no coincide con las fichas integradas');
+  if (a.fotosDetectadas !== fotosTotales || a.fotosIntegradas !== fotosTotales) err(`vehicles.json: fotos detectadas/integradas no coinciden con las galerías (${fotosTotales})`);
+  for (const u of rev?.unidades ?? []) {
+    if (a.autos.some((v) => v.id === u.id || v.url === u.url)) err(`autos-en-revision.json: ${u.id} está también publicada en vehicles.json`);
+    if (idx.includes(u.titulo)) err(`index.html: se muestra ${u.id} (${u.titulo}), que está en revisión`);
+    if (!u.motivo) err(`autos-en-revision.json ${u.id}: falta el motivo`);
+  }
+
+  // --- restos de otras agencias ---
+  /* Lista de nombres de OTROS clientes que no deben aparecer en este sitio: publicacion.restosProhibidos en data/dealership.json (ej. ["Automotores Fulano", "Rosario"]). Vacía = no se controla. */
+  const prohib = ((d.publicacion && d.publicacion.restosProhibidos) || []).map((x) => String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const legacy = prohib.length ? new RegExp(prohib.join('|'), 'i') : /(?!)/;
+  const skip = new Set(['node_modules', '.git', 'fonts', 'docs', '_site']);
+  const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => skip.has(e.name) ? [] : e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]);
+  for (const f of walk(root)) {
+    const rel = path.relative(root, f);
+    if (!/\.(html|js|mjs|json|md|xml|txt|webmanifest|svg|yml|css)$/.test(rel) || ['scripts/validate-dealership.mjs', 'data/dealership.json'].includes(rel.split(path.sep).join('/'))) continue;
+    if (legacy.test(fs.readFileSync(f, 'utf8'))) err(`${rel}: quedan restos de otro proyecto`);
+  }
+
+  // --- pendientes y puerta de producción ---
+  const abiertos = (pend?.items ?? []).filter((i) => i.estado !== 'resuelto');
+  const bloqueantes = abiertos.filter((i) => i.bloqueante);
+  if (PROD) {
+    if (!d.publicacion.official) err('PROD: publicacion.official debe ser true');
+    if (demo) err('PROD: publicacion.publicIndexing debe ser true');
+    if (!/^https:\/\//.test(d.publicacion.siteUrl || '')) err('PROD: falta publicacion.siteUrl (https)');
+    if (!c.confirmadoPorDueno || !(c.whatsApp || c.phone)) err('PROD: falta teléfono o WhatsApp confirmado por el dueño');
+    for (const b of bloqueantes) err(`PROD: pendiente bloqueante ${b.id}: ${b.tema}`);
+  } else if (bloqueantes.length) warns.push(`${bloqueantes.length} pendientes bloqueantes para producción (${bloqueantes.map((b) => b.id).join(', ')}); ver data/pendientes.json`);
+  if (abiertos.length) warns.push(`${abiertos.length} pendientes abiertos en total`);
+}
+
+// Historias («Unidad destacada»): la sección se arma desde historias.destacada (data/dealership.json) y los datos de data/vehicles.json.
+{
+  const h = d && d.historias;
+  let dest = h && h.destacada;
+  /* Igual que el generador: sin unidadId/foto, la destacada es la primera unidad con una foto apaisada de al menos 1000 px. */
+  if (dest && dest.activa === true && !(dest.unidadId && dest.foto && dest.foto.src)) {
+    const u0 = ((a && a.autos) || []).find((x) => !x.vendida && Array.isArray(x.fotos) && x.fotos.length);
+    if (u0) { const f0 = u0.fotos.find((f) => f.width > f.height && f.width >= 1000) || u0.fotos[0]; dest = { ...dest, unidadId: u0.id, foto: { src: f0.src, alt: f0.alt } }; }
+  }
+  if (dest && dest.activa === true) {
+    const unit = ((a && a.autos) || []).find((x) => String(x.id) === String(dest.unidadId));
+    if (!unit) err(`historias.destacada: la unidad ${dest.unidadId} no existe en data/vehicles.json`);
+    else if (unit.vendida) err(`historias.destacada: la unidad ${dest.unidadId} figura como vendida; hay que elegir otra`);
+    const f = dest.foto || {};
+    if (!f.alt || !String(f.alt).trim()) err('historias.destacada.foto.alt no puede estar vacío');
+    if (!f.src || !fs.existsSync(path.join(root, f.src))) err(`historias.destacada.foto.src no existe en disco: ${f.src}`);
+    else {
+      if (unit && Array.isArray(unit.fotos) && !unit.fotos.some((x) => x.src === f.src)) err('historias.destacada.foto.src no es una foto de la unidad indicada');
+      try {
+        const { default: sharp } = await import('sharp');
+        const m = await sharp(path.join(root, f.src)).metadata();
+        if (!(m.width > m.height)) err(`historias.destacada.foto debe ser apaisada (es ${m.width}×${m.height})`);
+        if (m.width < 1000) err(`historias.destacada.foto debe tener al menos 1000 px de ancho (tiene ${m.width})`);
+      } catch (e) { warns.push('historias: no se pudo leer el tamaño de la foto (¿falta sharp? npm ci)'); }
+    }
+    const aut = f.autorizacion || {};
+    if (aut.registrada !== true) {
+      if (PROD) err('PROD: historias.destacada.foto.autorizacion.registrada debe ser true (autorización de la foto)');
+      else warns.push('historias.destacada: foto sin autorización registrada (bloquea producción)');
+    }
+  }
+  const local = h && h.local;
+  if (local && local.activa === true) {
+    for (const [i, ft] of (local.fotos || []).entries()) {
+      const au = ft.autorizacion || {};
+      if (!au.texto || !au.fecha) err(`historias.local.fotos[${i}]: falta autorizacion (texto + fecha)`);
+    }
+    if (!(local.fotos || []).length) err('historias.local está activa pero no tiene fotos');
+  }
+}
+
+for (const w of warns) console.log(`aviso: ${w}`);
+if (errors.length) {
+  console.error(`\n${errors.length} problema(s):`);
+  for (const e of errors) console.error(' ✗ ' + e);
+  process.exit(1);
+}
+console.log(`✓ Validación ${PROD ? 'de producción ' : ''}correcta`);
