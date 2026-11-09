@@ -1,0 +1,34 @@
+/* Demo · css/pulido.css */
+
+/* Abierto ahora (header) */
+.dx-open{display:inline-flex;align-items:center;gap:8px;margin-right:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.28);color:inherit;font:700 12px/1 var(--hero-copy,inherit);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.dx-open:hover,.dx-open:focus-visible{border-color:currentColor}
+.dx-dot{width:9px;height:9px;border-radius:50%;background:#9aa0a6;flex:none}
+.dx-open.is-open .dx-dot{background:#2ecc71;box-shadow:0 0 0 0 rgba(46,204,113,.6);animation:dx-pulse 2s infinite}
+.dx-open.is-closed .dx-dot{background:#e5484d}
+@keyframes dx-pulse{70%{box-shadow:0 0 0 7px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+@media (max-width:520px){.dx-open{margin-right:8px;padding:6px 9px;font-size:11px;letter-spacing:.04em}}
+@media (max-width:360px){.dx-open-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
+
+/* Skeletons */
+.dx-sk,.dx-sk-map{position:relative;overflow:hidden}
+.dx-sk::after,.dx-sk-map::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(100deg,rgba(128,128,128,.14) 20%,rgba(255,255,255,.18) 40%,rgba(128,128,128,.14) 60%);background-size:220% 100%;animation:dx-sh 1.3s linear infinite}
+.dx-sk-map{min-height:240px;background:rgba(128,128,128,.12)}
+@keyframes dx-sh{from{background-position:120% 0}to{background-position:-120% 0}}
+
+/* Tu usado en pasos */
+.dx-wiz [hidden]{display:none!important}
+.dx-wiz .dx-off{display:none!important}
+.dx-steps{display:grid;gap:12px;margin:0 0 16px}
+.dx-st-l{display:flex;gap:8px;margin:0;padding:0;list-style:none}
+.dx-st-l li{flex:1;display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:2px solid rgba(128,128,128,.35);font:700 11.5px/1.2 var(--hero-copy,inherit);letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.dx-st-l li span{display:inline-grid;place-items:center;width:22px;height:22px;border:1.5px solid currentColor;border-radius:50%;font-size:11px;flex:none}
+.dx-st-l li.is-on{opacity:1;border-bottom-color:var(--y,#e0202b)}
+.dx-st-l li.is-ok{opacity:.9}
+.dx-st-l li.is-ok span{background:var(--y,#e0202b);border-color:var(--y,#e0202b);color:#fff}
+.dx-st-b{display:flex;gap:10px;justify-content:space-between}
+.dx-st-b .cv-btn{flex:1}
+.dx-st-e{margin:0;color:#e5484d;font-size:13px;font-weight:600}
+@media (max-width:420px){.dx-st-l li{font-size:10px;gap:5px}}
+
+@media (prefers-reduced-motion:reduce){.dx-sk::after,.dx-sk-map::after,.dx-open.is-open .dx-dot{animation:none}}
