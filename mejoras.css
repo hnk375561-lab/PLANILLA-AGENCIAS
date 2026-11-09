@@ -1,0 +1,47 @@
+/* mejoras.css · estado "Abierto ahora" en el header, permuta en pasos y skeletons de carga.
+   Sin red, sin dependencias. Respeta prefers-reduced-motion. */
+
+/* ---------- 1. Chip "Abierto ahora" en el header ---------- */
+.hdr-est{display:inline-flex;align-items:center;gap:8px;flex:none;margin:0 6px 0 0;padding:7px 13px;border:1px solid rgba(248,248,248,.28);border-radius:999px;background:rgba(6,6,7,.35);color:#f8f8f8;font:700 12.5px/1.1 var(--b,system-ui,sans-serif);letter-spacing:.02em;white-space:nowrap}
+.hdr-est:not([data-listo]){display:none}
+.hdr-est b{font-weight:800}
+.hdr-est small{font:500 12px/1.1 var(--b,system-ui,sans-serif);opacity:.78}
+.hdr-est small[hidden]{display:none}
+.hdr-est::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:#8a8a8a}
+.hdr-est[data-abierto="1"]::before{background:#27c16a;box-shadow:0 0 0 0 rgba(39,193,106,.55);animation:hdr-pulso 2.2s ease-out infinite}
+.hdr-est[data-abierto="0"]::before{background:#e5484d}
+@keyframes hdr-pulso{70%{box-shadow:0 0 0 8px rgba(39,193,106,0)}100%{box-shadow:0 0 0 0 rgba(39,193,106,0)}}
+@media(max-width:980px){
+  .site-header--home .hdr-est{margin:0 0 0 auto;padding:6px 11px;font-size:12px}
+  .site-header--home .hdr-est + .menu-toggle{margin-left:0}
+  .hdr-est small{display:none}
+}
+@media(max-width:359px){.hdr-est{display:none!important}}
+
+/* ---------- 2. Permuta en pasos ---------- */
+.cv-form[data-wiz] .cv-f[data-wz-off]{display:none!important}
+.wz-st{display:flex;gap:8px;margin:20px 0 18px;padding:0;list-style:none}
+.wz-st li{flex:1 1 0;min-width:0}
+.wz-b{display:flex;align-items:center;gap:9px;width:100%;margin:0;padding:0 0 10px;border:0;border-bottom:3px solid var(--cv-ln,rgba(128,128,128,.3));background:none;color:var(--cv-mut,#999);font:700 13px/1.1 var(--hero-copy,var(--b,system-ui,sans-serif));text-align:left;cursor:pointer;transition:color .18s,border-color .18s}
+.wz-b:focus-visible{outline:2px solid var(--cv-tx,currentColor);outline-offset:3px}
+.wz-n{flex:none;display:inline-grid;place-items:center;width:24px;height:24px;border:1.5px solid currentColor;border-radius:50%;font-size:12px}
+.wz-t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wz-b.ok{color:var(--cv-tx,inherit)}
+.wz-b.ok .wz-n{background:var(--cv-tx,currentColor);color:var(--cv-bg,#111);border-color:var(--cv-tx,currentColor)}
+.wz-b.on{color:var(--cv-tx,inherit);border-bottom-color:var(--cv-tx,currentColor)}
+.wz-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0 6px}
+.wz-nav .cv-btn{flex:0 1 auto}
+.wz-nav .wz-next{margin-left:auto}
+.wz-fin{margin:0;color:var(--cv-mut,#999);font:600 14px/1.4 var(--hero-copy,var(--b,system-ui,sans-serif))}
+.wz-fin[hidden]{display:none}
+.wz-live{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:640px){.wz-t{font-size:12px}.wz-nav .cv-btn{flex:1 1 0}}
+
+/* ---------- 3. Skeletons de carga (fotos de las tarjetas) ---------- */
+.car-ph{position:relative}
+.car-ph.sk::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(100deg,rgba(128,128,128,.16) 30%,rgba(160,160,160,.34) 50%,rgba(128,128,128,.16) 70%);background-size:220% 100%;animation:sk-brillo 1.3s linear infinite}
+@keyframes sk-brillo{from{background-position:120% 0}to{background-position:-120% 0}}
+@media(prefers-reduced-motion:reduce){
+  .hdr-est[data-abierto="1"]::before{animation:none}
+  .car-ph.sk::before{animation:none;background:rgba(128,128,128,.22)}
+}
