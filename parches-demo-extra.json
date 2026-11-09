@@ -1,0 +1,50 @@
+[
+ {
+  "viejo": ".dx-top{display:flex;",
+  "nuevo": ".dx-top{display:none !important;"
+ },
+ {
+  "viejo": ">Demo sin verificar</text>",
+  "nuevo": ">Propuesta de demostración</text>"
+ },
+ {
+  "viejo": "(small ? 'Ejemplo' : 'Ejemplo, sin verificar')",
+  "nuevo": "(small ? 'Ejemplo' : 'Ejemplo')"
+ },
+ {
+  "viejo": "<span>Unidad de ejemplo: foto, precio y datos sin verificar.</span>",
+  "nuevo": "<span>Unidad de ejemplo: la foto, el precio y los datos se reemplazan por su stock real.</span>"
+ },
+ {
+  "viejo": "<b>Ficha de ejemplo, datos sin verificar</b>",
+  "nuevo": "<b>Ficha de ejemplo</b>"
+ },
+ {
+  "viejo": "No es una oferta, una reserva ni stock real.",
+  "nuevo": "No constituye una oferta ni una reserva. Al publicar, los reemplazo por los datos reales de cada unidad."
+ },
+ {
+  "viejo": "a.title = 'Dato sin confirmar con la agencia';",
+  "nuevo": "a.title = 'Dato a confirmar por usted';"
+ },
+ {
+  "viejo": "mk('span', 'dx-inline', 'sin confirmar')",
+  "nuevo": "mk('span', 'dx-inline', 'a confirmar')"
+ },
+ {
+  "viejo": "Formulario de demostración: no lo uses para consultas reales. No está verificado que llegue a la agencia.",
+  "nuevo": "Formulario de demostración: todavía no está conectado. Al publicar, las consultas le llegan a su WhatsApp y correo."
+ },
+ {
+  "viejo": "Horario sin confirmar con la agencia. Puede cambiar: consultá antes de ir.",
+  "nuevo": "Horario a confirmar por usted: lo tomé de fuentes públicas (ver «Ver qué revisar»)."
+ },
+ {
+  "viejo": "Dirección sin confirmar con la agencia. Verificala antes de ir.",
+  "nuevo": "Dirección a confirmar por usted: la tomé de fuentes públicas (ver «Ver qué revisar»)."
+ },
+ {
+  "viejo": "Reseñas y puntaje de fuentes públicas, sin verificar con la agencia.",
+  "nuevo": "Reseñas y puntaje tomados de fuentes públicas: a confirmar por usted."
+ }
+]
